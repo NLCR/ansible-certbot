@@ -1,0 +1,13 @@
+git init
+git remote add origin ssh://git@bitbucket.org/JanMeritus/nkcrrepo.git
+mkdir httpsInst
+sudo vagrant init centos/6
+sudo vagrant up
+
+
+
+
+cd ..
+git commit -m "VMasina Instalacia HTTPS Centos6/Nginx cez certbot"
+
+
