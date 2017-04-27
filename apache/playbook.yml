@@ -1,0 +1,66 @@
+---
+- hosts: all
+  tasks:
+   - name: 1.Ensure NTP is installed -time synchro.
+     yum: name=ntp state=installed
+   - name: Ensure NTP is running.
+     service: name=ntpd state=started enabled=yes
+   - name: 2.a_Install Installators - EPEL.
+     yum: name=epel-release state=installed
+   - name: Install Installators - PIP, for unexpected.
+     yum: name=python-pip state=latest
+   - name: 2.b_Installing APACHE and all necessities.
+     yum: name={{ item }} state=installed
+     with_items:
+         - httpd
+         - mod_ssl
+         - python-certbot-apache
+         - links
+#   - name: 2.c Ensure APACHE is running.
+#     service: name=httpd state=started enabled=yes
+   - name: 2.d Ensure that firewall is running.
+     service: name=firewalld state=started enabled=yes
+   - name: 3.a Playing with firewall and iptables
+     command: firewall-cmd {{ item }}
+     with_items:
+       - --add-service=http
+       - --add-service=https
+       - --runtime-to-permanent
+   - name: 3.b Playing with firewall and iptables
+     command: iptables  -I INPUT -p tcp -m tcp --dport {{ item }}
+     with_items:
+       - 80 -j ACCEPT
+       - 443 -j ACCEPT
+       - 8080 -j ACCEPT
+#   - name: 3_Copying virtual.conf.
+#     copy: src="/home/lindon/VMasinky/subory/virtual.conf" dest="/etc/nginx/conf.d/virtual.conf"
+   - name: 3_Copying Skuska.cz.
+     copy: src="/home/lindon/VMasinky/subory2/skuska.cz" dest="/var/www/"  owner=apache group=apache mode=0755
+#   - name: 4_Setting up Virtual hosts dir available
+#     file: path="/etc/httpd/sites-available" state="directory" mode="0755"
+#   - name: 4_Setting up Virtual hosts dir enabled
+#     file: path="/etc/httpd/sites-enabled" state="directory" mode="0755"
+#   - name: 4_Copying httpd.conf.
+#     copy: src="/home/lindon/VMasinky/subory2/httpd.conf" dest="/etc/httpd/conf/httpd.conf"
+   - name: 4_Copying to skuska.cz.conf.
+     copy: src="/home/lindon/VMasinky/subory2/skuska.cz.conf" dest="/etc/httpd/conf.d/skuska.cz.conf"
+#   - name: Creating symbolic links in between
+#     file: src="/etc/httpd/sites-available/skuska.cz.conf" dest="/etc/httpd/sites-enabled/skuska.cz.conf" owner=apache group=apache state=link
+   - name: 4_Storing etc/hosts for VirtualHosts purposes.
+     copy: src="/home/lindon/VMasinky/subory2/hosts" dest="/etc/hosts"
+   - name: 5_Ensure APACHE is restarted and running on wheels.
+     service: name=httpd state=restarted enabled=yes
+   - name: 2.1._Going to nxt lvl - Installing certbot
+     yum: name=python-certbot-apache state=installed
+   - name: 1.Ensure PEXPECT is installed to be prepared for unexpected.
+     pip: name=pexpect state=latest
+#       -w /var/www/skuska.cz -d skuska.cz -d www.skuska.cz'
+   - name: 2.2 running individual Certbot webroot plugin
+     expect:
+       command: 'certbot --apache certonly'
+      # echo: 'true'
+       responses:
+         (?i)select: '1,2'
+         (?i)email: 'zdenko.vozar@nkp.cz'
+         (?i)gree: 'A'
+         (?i)es: 'Y'
