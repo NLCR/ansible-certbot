@@ -6,7 +6,7 @@
 
 - name: Provision from OS repositories
   package:
-    name: ntp, python-pip, httpd, mod_ssl, python-certbot-apache, links, firewalld
+    name: python-pip, httpd, mod_ssl, python-certbot-apache, links
     state: present
 
 - name: Provision from PIP repositories
@@ -20,18 +20,7 @@
     state: started
     enabled: yes
   with_items:
-    - ntpd
     - httpd
-    - firewalld
-
-- name: Firewalld accepts these services
-  firewalld:
-    service: '{{ item }}'
-    state: enabled
-    permanent: yes
-  with_items:
-    - http
-    - https
 
 - name: Restarting services
   service:
@@ -39,7 +28,6 @@
     state: restarted
   with_items:
     - httpd
-    - firewalld
 
 - name: Running Certbot
   expect:
