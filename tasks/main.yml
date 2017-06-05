@@ -1,5 +1,5 @@
 ---
-- name: 'Including {{ ansible_os_family }} spefic playbooks'
+- name: 'Including {{ ansible_os_family }} specific playbook.'
   include: '{{ ansible_os_family }}.yml'
 
 - name: Provision from OS repositories
