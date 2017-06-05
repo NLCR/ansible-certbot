@@ -1,8 +1,6 @@
 ---
-- name: Enable EPEL repository
-  yum:
-    name: epel-release
-    state: installed
+- name: 'Including {{ ansible_os_family }} spefic playbooks'
+  include: '{{ ansible_os_family }}.yml'
 
 - name: Provision from OS repositories
   package:
