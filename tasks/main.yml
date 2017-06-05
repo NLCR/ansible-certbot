@@ -1,0 +1,51 @@
+---
+- name: Enable EPEL repository
+  yum:
+    name: epel-release
+    state: installed
+
+- name: Provision from OS repositories
+  package:
+    name: ntp, python-pip, httpd, mod_ssl, python-certbot-apache, links, firewalld
+    state: present
+
+- name: Provision from PIP repositories
+  pip:
+    name: pexpect
+    state: present
+
+- name: Services are running and starts after reboot
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: yes
+  with_items:
+    - ntpd
+    - httpd
+    - firewalld
+
+- name: Firewalld accepts these services
+  firewalld:
+    service: '{{ item }}'
+    state: enabled
+    permanent: yes
+  with_items:
+    - http
+    - https
+
+- name: Restarting services
+  service:
+    name: '{{ item }}'
+    state: restarted
+  with_items:
+    - httpd
+    - firewalld
+
+- name: Running Certbot
+  expect:
+    command: 'certbot --apache certonly'
+    responses:
+      (?i)select: '1,2'
+      (?i)email: 'webarchiv@nkp.cz'
+      (?i)gree: 'A'
+      (?i)es: 'Y'
