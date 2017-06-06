@@ -4,7 +4,7 @@
 
 - name: Provision from OS repositories
   package:
-    name: python-pip, httpd, mod_ssl, python-certbot-apache, links
+    name: python-pip, httpd, mod_ssl, python-certbot-apache
     state: present
 
 - name: Provision from PIP repositories
