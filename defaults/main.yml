@@ -1,0 +1,7 @@
+---
+ssl_certs_country: "CZ"
+ssl_certs_locality: "Klementinum"
+ssl_certs_organization: "NLCR"
+ssl_certs_state: "Prague"
+ssl_certs_days: "365"
+ssl_certs_email: "webarchiv@nkp.cz"

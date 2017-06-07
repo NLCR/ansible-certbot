@@ -32,6 +32,6 @@
     command: 'certbot --apache certonly'
     responses:
       (?i)select: '1,2'
-      (?i)email: 'webarchiv@nkp.cz'
+      (?i)email: '{{ ssl_certs_email }}'
       (?i)gree: 'A'
       (?i)es: 'Y'
